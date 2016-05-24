@@ -1,0 +1,57 @@
+<!--
+********************
+**** 2016-05-24 ****
+********************
+-->
+
+<script>
+  // 拖动地图自动刷新 中心位置图标
+  AMap.event.addListener(map,'dragging',function(e){
+    oLocation_firstHtml = true;
+    var p = map.getCenter();
+    marker && marker.setPosition(p);
+    //map.setDefaultCursor("url(http://developer.amap.com/wp-content/uploads/2014/06/closedhand.cur),pointer");
+  });
+
+  // 拖动地图松开刷新 附近位置信息
+  AMap.event.addListener(map,'dragend',function(e){
+    oLocation_firstHtml = true;
+    var p = map.getCenter();
+    marker && marker.setPosition(p);
+    geocoder && geocoder.getAddress(p,function(status, result){
+      if (status === 'complete') {
+        geocoder_callBack(result, p);
+        document.body.scrollTop = 0;
+      }
+    });
+  });
+
+  // 定位至我的位置
+  $('.ddbUi-lineMap .mapButton .icon.myp').on('click', function(){
+    oLocation = true;
+    oLocation_firstHtml = true;
+    marker && marker.setMap(null);
+    marker = undefined;
+    document.body.scrollTop = 0;
+
+    var user_gps = ddb.pgps("user_data_gps");
+    if(user_gps && user_gps.data){
+      onComplete(user_gps.data,user_gps.position);
+    }else{
+      geolocation.getCurrentPosition(onComplete, onError);
+    }
+
+    /*// 另一种方法
+    var p = ddb.pgps('user_data_gps');
+    if(p && p.position){
+      p = new AMap.LngLat(p.position.lng, p.position.lat);
+      map && map.setCenter(p);
+      marker && marker.setPosition(p);
+      geocoder && geocoder.getAddress(p, function(status, result){
+        if (status === 'complete') {
+          geocoder_callBack(result, p);
+        }
+      });
+    }*/
+  });
+</script>

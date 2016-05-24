@@ -1,0 +1,33 @@
+<!--
+********************
+**** 2016-05-24 ****
+********************
+-->
+<body>
+  <!-- 个人信息 -->
+  <ul class="m-avatar-list hairlines-top hairlines-bottom" hidden>
+  	<li ms-if="!isLogin" class="avatar-default" ms-click="gotoUrl('login')" data-mtaid="mine.links.login">
+      <img src="image/avatar_default.png" alt=""/><h2>登录/注册</h2>
+  	</li>
+    <li ms-if="isLogin" ms-click="gotoUrl('my_info')" data-mtaid="mine.links.my_info">
+      <img ms-src="userInfo.avatar? userInfo.avatar:'image/avatar_default.png'" alt="">
+      <div>
+        <h3>{{userInfo.nickname? userInfo.nickname:'暂未设置昵称'}}<label ms-if="isVolunteer">巴士长</label></h3>
+        <sub>ID：{{userInfo.id}}</sub>
+      </div>
+    </li>
+  </ul>
+
+</body>
+
+<script>    
+  if (vm.isLogin) {
+    // 获取用户个人信息
+    ddb.get('member/get_member_info', { cachekey: 'member/get_member_info' }, function(d) {
+      if (0 === +d.ret) {
+        vm.userInfo = d.data;
+        vm.isVolunteer = d.data.role == 2;
+      }
+    });
+  }
+</script>

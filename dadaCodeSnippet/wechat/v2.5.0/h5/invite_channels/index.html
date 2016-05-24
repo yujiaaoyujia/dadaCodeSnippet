@@ -1,0 +1,323 @@
+<!--
+********************
+**** 2016-05-24 ****
+********************
+-->
+<!doctype html>
+<html>
+<head>
+  <title>****</title>
+  <meta charset="utf-8">
+  <meta name="description" content="****" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <link rel="stylesheet" href="css/base-debug.css?rev=2.4.1">
+  <script src="js/wjs-setrem.js?rev=2.2.0"></script>
+  <style>
+    /* 全局样式 */
+    ::-webkit-input-placeholder { color: #ccc; }
+    html { height: 100%; }
+    body { height: 100%; background: #fff8c9;}
+    .container { height: 100%; }
+
+    /* 邀请乘车 */
+    .page-invite { min-height: 100%; margin: 0 auto; text-align: center; background: url(image/bg1.png) top center no-repeat; background-size: 100% 10.05rem; }
+    .page-invite::after { content: ''; display: block; padding-bottom: .2rem; }
+    .page-invite .invite-banner { display: block; margin: 0 auto; padding: .2rem 0 .6rem; width: 5.24rem; height: 4.28rem; background: url(image/banner.png) center center no-repeat; background-size: contain; }
+    .page-invite .invite-input { display: block; margin: .2rem auto; width: 4.06rem; height: .83rem; line-height: .83rem; background: url(image/input.png) center center no-repeat; background-size: contain; font-size: .3rem; color: #2b2b2b; text-align: center; }
+    .page-invite .invite-input input { width: 3.5rem; background: transparent; font-size: .3rem; height: .4rem; line-height: .4rem; color: #2b2b2b; border: none; text-align: center; -webkit-appearance: none; appearance: none; }
+    .page-invite .invite-button { margin: 0 auto; width: 4.1rem; height: .84rem; background: url(image/get.png) center center no-repeat; background-size: contain; text-align: center; }
+    .page-invite .invite-button:active { background-image: url(image/get_active.png); }
+
+    /* 注册成功 */
+    .page-success { min-height: 100%; margin: 0 auto; text-align: center; background: url(image/bg2.png) top center no-repeat; background-size: 100% 10.05rem; }
+    .page-success::before { content: ''; display: block; padding-top: 1rem; }
+    .page-success::after { content: ''; display: block; padding-bottom: .2rem; }
+    .page-success .success { display: block; margin: .15rem auto; width: 2.06rem; height: .38rem; background: url(image/success.png) center center no-repeat; background-size: contain; }
+    .page-success .paragraph { display: block; margin: .5rem auto 0; width: 3.65rem; height: 1.04rem; background: url(image/paragraph.png) center center no-repeat; background-size: contain; }
+    .page-success .dadabus-public { display: block; margin: .4rem auto .3rem; width: 2.5rem; height: 2.67rem; text-align: center; }
+    .page-success .downApp { margin: 0 auto; width: 1.82rem; height: .61rem; background: url(image/download.png) center center no-repeat; background-size: contain; text-align: center; }
+    .page-success .downApp:active { background-image: url(image/download_active.png); }
+
+    /* 优惠券样式 页脚样式*/
+    .coupon { display: block; margin: 0 auto; width: 2.54rem; height: 1.43rem; background: url(image/coupon.png) center center no-repeat; background-size: contain;  }
+    .footer { position: relative; display: block; margin: .4rem auto 0; width: 1.7rem; height: .34rem; background: url(image/logo.png) top center no-repeat; background-size: contain; }
+
+    /* 按钮样式 */
+    /*.invite-button, .downApp { margin: .2rem auto 0; width: 4.6rem; line-height: .8rem; font-size: .34rem; background: #ffad00; color: #fff; border: 1px solid #ffad00; border-radius: .1rem; text-align: center; -webkit-appearance: none; appearance: none; }*/
+    /*.invite-button:active, .downApp:active { background: #ee7b00; border-color: #ee7b00; }*/
+
+    /* 注册弹窗 */
+    .popup-register .popup-fixed { position: fixed; background: rgba(0,0,0,0.5); top: 0; bottom: 0; left: 0; right: 0; z-index: 2; }
+    .popup-register .register-dialog { position: fixed; background: #fff; width: 4rem; left: 50%; top: 30%; margin-left: -2.4rem; border-radius: .2rem; padding: .4rem; z-index: 3; }
+    .popup-register .register-dialog p { margin-bottom: .2rem; font-size: .22rem; text-align: center; color: #ff9c00; }
+    .popup-register .register-dialog input { float: left; width: 2.38rem; height: .8rem; font-size: .26rem; text-align: center; box-sizing: border-box; border: 1px solid #d4d4d4; border-radius: .1rem; }
+    .popup-register .register-dialog a { float: right; display: block; width: 1.5rem; height: .8rem; font-size: .26rem; line-height: .8rem; color: #fff; background: #ff9c00; text-align: center; border-radius: .1rem; }
+    .popup-register .register-dialog a.disabled { background: #999; }
+    .popup-register .register-dialog button { width: 100%; height: .8rem; line-height: .8rem; margin-top: .2rem; color: #fff; background: #ff9c00; border-radius: .1rem; font-size: .32rem; }
+    .popup-register .register-dialog a:active, .popup-register .register-dialog button:active { background: #ee7b00; }
+    .popup-register .register-dialog a.disabled:active { background: #999; }
+  </style>
+</head>
+
+<body ms-controller="invite">
+  <!-- 默认分享图标 -->
+  <div style='margin:0 auto;display:none;'>
+    <img src='image/side_avatar_default.png' />
+  </div>
+
+  <!-- 页面 -->
+  <article class="container" hidden>
+    <!-- 邀请乘车 -->
+    <section class="page-invite" ms-if="page==1">
+      <div class="invite-banner"></div>
+      <div class="coupon"></div>
+      <div class="invite-input"><input type="tel" ms-duplex="mobile" maxlength="11" placeholder="请输入手机号" /></div>
+      <button id="invite-takebus" class="invite-button"></button>
+      <footer class="footer"></footer>
+    </section>
+
+    <!-- 注册成功 -->
+    <section class="page-success" ms-if="page==2">
+      <div class="coupon"></div>
+      <span class="success"></span>
+      <p class="paragraph"></p>
+      <img class="dadabus-public" src="image/dadabus_public.jpg?t=102">
+      <button class="downApp" ms-click="downApp"></button>
+      <footer class="footer"></footer>
+    </section>
+  </article>
+
+  <!-- 注册弹窗 -->
+  <article class="popup-register" ms-if="isPopup" hidden>
+    <div class="popup-fixed" ms-click="togglePopup"></div>
+    <section class="register-dialog">
+      <p>请输入短信验证码完成注册</p>
+      <input type="tel" ms-duplex="verify" placeholder="请输入验证码" />
+      <a id="timeout" ms-class="disabled:countdown!='重新获取'">{{countdown}}</a>
+      <button id="register">完成注册</button>
+    </section>
+  </article>
+
+  <script>(/MicroMessenger/i).test(navigator.userAgent) && (function(){var script=document.createElement('script');script.src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js';document.head.appendChild(script);})();</script>
+  <script src="js/zepto.js"></script>
+  <script src="js/avalon-mobile-shim.js?rev=1.4.7.2"></script>
+  <script src="js/base-debug.js?rev=2.4.02721"></script>
+  <script src="js/avalon-filters-debug.js?rev=2.3.4144"></script>
+  <script>
+    avalon.ready(function() {
+      // var ddbSrcId = B.url.getParam("ddb_src_id") || '2103';
+      var ddbSrcId = '2103';
+      var current_mobile = ''; // 最近输入的手机号
+
+      var vm = avalon.define({
+        $id: 'invite',
+        page: 1, // 页面控制 1->邀请乘车 2->注册成功
+        mobile: '', // 手机号码
+        verify: '', // 验证码
+        isPopup: false, // 是否显示注册弹窗
+        countdown: '重新获取', // 验证码倒计时
+        // 关闭注册弹窗
+        togglePopup: function(){
+          vm.isPopup = !vm.isPopup;
+        },
+        // 下载app
+        downApp: function(){
+          location.href = "****";
+        }
+      });
+      avalon.scan();
+
+      // 未注册用户 获取手机验证码
+      var timer = null, num = 0;
+      function getMobileValidate(mobile) {
+        if( vm.countdown != '重新获取' ){ return; }
+        vm.countdown = '获取中';
+        ddb.get("authentication/send_auth_msg", { mobile: mobile, ddb_src_id: ddbSrcId }, function(d) {
+          if(0 === +d.ret){
+            vm.isPopup = true;
+            num = 59;
+            clearInterval(timer);
+            timer = setInterval(function(){
+              vm.countdown = num +'秒';
+              if( num<=0 ){
+                clearInterval(timer);
+                vm.countdown = '重新获取';
+              }
+              num--;
+            },1000);
+          }else if( 1001 === +d.ret ){
+            // 手机号码格式错误
+            vm.countdown = '重新获取';
+            ddb.msg("您输入的手机号有误");
+          }else if( 1002 === +d.ret ){
+            // 短信发送太频繁
+            vm.isPopup = true;
+            num = 59;
+            clearInterval(timer);
+            timer = setInterval(function(){
+              vm.countdown = num +'秒';
+              if( num<=0 ){
+                clearInterval(timer);
+                vm.countdown = '重新获取';
+              }
+              num--;
+            },1000);
+            ddb.msg(d.msg);
+          }else{
+            vm.countdown = '重新获取';
+            ddb.msg(d.msg);
+          }
+        });
+      }
+
+      // 设置默认微信分享数据
+      /*ddb.wx.share({
+        isShare: 1,
+        JSSDK_Share: {
+          title: '****',
+          desc: '****'
+        }
+      });*/
+
+      // 再分享需要把分享人设置为当前用户
+      /*
+      function wxShare() {
+        ddb.get('share/get_share_url', { share_type: 3, mobile: vm.mobile, notCheckLogin: true }, function(d) {
+          if (0 === +d.ret) {
+            ddb.wx.share({
+              isShare: 0,
+              JSSDK_Share: {
+                title: d.data.share_title,
+                desc: d.data.share_detail,
+                link: d.data.share_url
+              }
+            });
+          }
+        }, function(e) {
+          ddb.debug(e);
+        });
+      }
+      */
+
+      // 马上乘车
+      $("#invite-takebus").on("click", function(e) {
+        // 验证手机号码
+        if (!vm.mobile) {
+          ddb.msg('请输入手机号码');
+          return false;
+        }
+        if (!(/^1\d{10}$/.test(vm.mobile))) {
+          ddb.msg('您输入的手机号有误');
+          return false;
+        }
+
+        // 如果输入刚发短信的手机号
+        if( vm.mobile == current_mobile ){
+          vm.isPopup = true; // 显示注册弹窗
+          if( vm.countdown == '重新获取' ){
+            getMobileValidate(vm.mobile); // 根据情况再次发送短信
+          }
+          return false;
+        }
+
+        ddb.get('authentication/reg_check', { mobile: vm.mobile }, function(d) {
+          if (0 === +d.ret) {
+            if ( +d.data.has_reg === 2 ) {
+              // 未注册
+              vm.isPopup = true; // 显示注册弹窗
+              vm.countdown = '重新获取'; // 重置短信倒计时
+              current_mobile = vm.mobile; // 记录发短信的手机号
+              getMobileValidate(vm.mobile); // 发送短信验证码
+            } else {
+              // 已注册用户不能领取新人礼
+              ddb.msg("抱歉，您已经是****用户了哟");
+            }
+          } else {
+            ddb.msg(d.msg);
+          }
+        }, function(e) {
+          ddb.msg("网络异常");
+        });
+      });
+
+      // 重新获取
+      $("#timeout").on("click", function(e) {
+        getMobileValidate(vm.mobile); // 发送短信验证码
+      });
+
+      // 完成注册
+      $("#register").on("click", function(e) {
+        // 验证码不能为空
+        if (!vm.verify) {
+          ddb.msg('请输入验证码');
+          return false;
+        }
+        /*
+        ddb.get('share/new_reg_award', { verify_code: vm.verify, mobile: vm.mobile, notCheckLogin: true }, function(d) {
+          if (0 === +d.ret) {
+            vm.isPopup = false;
+            vm.page = 2;
+          } else if ( 1801 === +d.ret ) {
+            // 已注册用户不能领取新人礼
+            ddb.msg("您已经是**用户了,不能领取新人礼了哦!");
+          } else {
+            ddb.msg(d.msg);
+          }
+        });
+        */
+
+        $.ajax({
+          url: ddb.api + 'authentication/auth_verify',
+          data: {
+            auth_code: vm.verify,
+            version: ddb.version,
+            login_type: 1, // 乘客端
+            device_type: 3, // 设备类型
+            mobile: vm.mobile, // 用户绑定的手机号，登录后有效，未登录为空字符串
+            ddb_src_id: ddbSrcId,
+            source: 5 // 请求来源
+          },
+          cache: false,
+          type: 'GET',
+          dataType: 'json'
+        }).done(function(o) {
+          if( +o.ret === 0 ){
+            vm.isPopup = false;
+            vm.page = 2;
+          }else{
+            alert(o.msg);
+          }
+        });
+      });
+
+      // 隐藏菜单
+      setTimeout(function(){
+        if (ddb.isWeixin && window.wx) {
+          wx.ready(function() {
+            wx.hideMenuItems({menuList: [
+              'menuItem:share:appMessage',
+              'menuItem:share:timeline',
+              'menuItem:share:qq',
+              "menuItem:share:weiboApp",
+              'menuItem:share:QZone',
+              "menuItem:copyUrl",
+              "menuItem:originPage",
+              "menuItem:openWithQQBrowser",
+              "menuItem:openWithSafari",
+              "menuItem:share:email"
+            ]});
+          });
+        }
+      },1000);
+
+    });
+
+
+
+
+  </script>
+</body>
+</html>

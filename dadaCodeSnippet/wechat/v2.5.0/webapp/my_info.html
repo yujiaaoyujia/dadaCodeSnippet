@@ -1,0 +1,353 @@
+<!--
+********************
+**** 2016-05-24 ****
+********************
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>个人信息</title>
+  <!--#include file="head.html"-->
+  <style>
+    body { background: #eee; letter-spacing: 0; }
+    .m-list { margin-top: .2rem; }
+    .btn-info { margin: .26rem 0; width: 100%; height: .9rem; line-height: .9rem; font-size: .3rem; color: #ff9c00; background: #fff; text-align: center; }
+    .btn-info.disabled { color: #b8b8b8; }
+
+    /* 信息主页 */
+    #page-info { display: table; width: 100%; }
+
+    /* 信息修改页 */
+    #page-setting { display: none; position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: auto; }
+    /* 头像选择 */
+    #page-setting .part-avatar { min-height: 100%; background: #fafafa; }
+    #page-setting .part-avatar > header { height: 3.6rem; background: url(image/avatar_banner.png?t=101) center center no-repeat; background-size: 100% 3.6rem; text-align: center; }
+    #page-setting .part-avatar > header i { display: inline-block; margin: .6rem auto .22rem; width: 1.8rem; height: 1.8rem; border-radius: .9rem; -webkit-box-shadow: 0 .05rem .04rem 0 rgba(0,0,0,0.02); box-shadow: 0 .05rem .04rem 0 rgba(0,0,0,0.02); overflow: hidden; }
+    #page-setting .part-avatar > header img { width: 1.8rem; height: 1.8rem; }
+    #page-setting .part-avatar > header h3 { height: .26rem; line-height: .26rem; font-size: .26rem; color: #fff; }
+    #page-setting .part-avatar .avatar-group { margin-top: .25rem; }
+    #page-setting .part-avatar .avatar-group > span { display: inline-block; position: relative; width: 25%; height: 1.45rem; text-align: center; }
+    #page-setting .part-avatar .avatar-group > span i { position: absolute; left: 50%; top: 50%; margin-left: -.6rem; margin-top: -.6rem; width: 1.2rem; height: 1.2rem; border-radius: .6rem; -webkit-box-shadow: 0 .05rem .04rem 0 rgba(0,0,0,0.02); box-shadow: 0 .05rem .04rem 0 rgba(0,0,0,0.02); overflow: hidden; z-index: 1; }
+    #page-setting .part-avatar .avatar-group > span i:active { -webkit-transform: scale(.84); transform: scale(.84); }
+    #page-setting .part-avatar .avatar-group > span img { width: 1.2rem; height: 1.2rem; }
+    #page-setting .part-avatar .avatar-group > span.chosen::before { content: ''; position: absolute; left: 50%; top: 50%; margin-left: .24rem; margin-top: .24rem; width: .36rem; height: .36rem; background: url(image/icon_choice.png) center center no-repeat; background-size: contain; z-index: 2; }
+    #page-setting .part-avatar .avatar-group > span.guide::after { content: ''; position: absolute; left: 50%; top: 50%; margin-left: -.5rem; margin-top: -.5rem; width: 1rem; height: 1rem; border-radius: .5rem; background: #ff9c00; z-index: 0; -webkit-animation: avatar 2500ms 300ms infinite; animation: avatar 2500ms 300ms infinite; }
+    #page-setting .part-avatar > p { padding: .25rem 0 1.3rem; background: #fafafa; color: #b8b8b8; line-height: .25rem; font-size: .2rem; text-align: center; }
+    #page-setting .part-avatar > footer { position: fixed; left: 0; right: 0; bottom: 0; height: 1rem; padding: 0 .3rem; background: #fff; z-index: 3; }
+    #page-setting .part-avatar > footer button { width: 100%; line-height: .7rem; margin-top: .14rem; border: 1px solid #ff9c00; border-radius: .1rem;  box-sizing: border-box; color: #ff9c00; }
+    #page-setting .part-avatar > footer button:active { border-color: #ee7b00; color: #ee7b00; }
+    #page-setting .part-avatar > footer.disabled > button { border-color: #ccc; color: #ccc; }
+    @-webkit-keyframes avatar {
+      0% { -webkit-transform: scale(1); opacity: 1; }
+      10% { -webkit-transform: scale(1.2); opacity: .8; }
+      100% { -webkit-transform: scale(1.6); opacity: 0; }
+    }
+    @keyframes avatar {
+      0% { transform: scale(1); opacity: 1; }
+      10% { transform: scale(1.2); opacity: .8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* 昵称修改 */
+    #page-setting .part-nickname { display: inline-block; width: 100%; height: 100%; background: #eee; }
+    #page-setting .part-nickname > h3 { margin: .1rem .3rem 0; font-size: .2rem; color: #b8b8b8; white-space: nowrap; overflow: hidden; }
+
+    /* 性别选择 */
+    #page-setting .part-sex { display: inline-block; width: 100%; height: 100%; background: #eee; }
+
+    /* 页面转场动画 */
+    .slide-left { -webkit-animation: slideLeft 300ms; animation: slideLeft 300ms; }
+    .slide-right { -webkit-transform : translate3d(100%,0,0); transform : translateX(100%); -webkit-transition: 300ms; transition: 300ms; }
+    @-webkit-keyframes slideLeft {
+      from { -webkit-transform: translate3d(100%,0,0); }
+      to { -webkit-transform: translate3d(0,0,0); }
+    }
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+  </style>
+</head>
+
+<body ms-controller="my_info">
+  <!-- 信息主页 -->
+  <article id="page-info">
+    <ul class="m-list hairlines-top hairlines-bottom" hidden>
+      <li class="list-avatar list-arrow hairlines-bottom" ms-click="switchStatus('avatar')">
+        头像<img ms-src="userInfo.avatar? userInfo.avatar:'image/avatar_default.png'" />
+      </li>
+      <li class="list-arrow hairlines-bottom" ms-click="switchStatus('nickname')">
+        昵称<span class="list-right" ms-class="list-gray:!userInfo.nickname">{{userInfo.nickname? userInfo.nickname:'暂未设置昵称'}}</span>
+      </li>
+      <li class="list-arrow hairlines-bottom" ms-click="switchStatus('sex')">
+        性别<span class="list-right" ms-class="list-gray:!+userInfo.sex">{{(+userInfo.sex? +userInfo.sex:'未设置')|sexFilter}}</span>
+      </li>
+      <li class="hairlines-bottom">
+        ID<span class="list-right default">{{userId}}</span>
+      </li>
+      <li ms-class="hairlines-bottom:isVolunteer">
+        手机号码<span class="list-right default">{{userMobile}}</span>
+      </li>
+      <li ms-if="isVolunteer">
+        特殊身份<span class="list-right default">巴士长</span>
+      </li>
+    </ul>
+    <button class="btn-info hairlines-top hairlines-bottom" ms-click="logOut" data-mtaid="my_info.logout">退出登录</button>
+  </article>
+  <!-- 信息修改 -->
+  <article id="page-setting">
+    <!-- 头像选择 -->
+    <section class="part-avatar" ms-if="setStatus==='avatar'">
+      <header>
+        <i><img ms-src="setAvatar? avatarData[setAvatar]:'image/avatar_default.png'" /></i>
+        <h3>{{setAvatar? '您当前的头像':'暂未设置头像'}}</h3>
+      </header>
+      <div class="avatar-group">
+        <span ms-repeat="avatarData" ms-class-1="chosen:setAvatar && +setAvatar===$index" ms-class-2="guide:$index===5 && !setAvatar">
+          <i ms-click="switchAvatar($index)"><img ms-src="el" alt="" /></i>
+        </span>
+      </div>
+      <p>点击头像即可更换您喜欢的头像哦</p>
+      <footer class="hairlines-top" ms-class="disabled:!setAvatar">
+        <button ms-click="saveAvatar" data-mtaid="my_info.avatar.save">保存</button>
+      </footer>
+    </section>
+    <!-- 昵称修改 -->
+    <section class="part-nickname" ms-if="setStatus==='nickname'">
+      <ul class="m-list hairlines-top hairlines-bottom" hidden>
+        <li><input class="list-line-input" type="text" placeholder="请输入您的昵称" maxlength="10" ms-duplex="setNickname" ms-keyup="limitLength(10)"/></li>
+      </ul>
+      <h3>昵称必须为1-10位字符，支持中英文、数字、“-”、“_”</h3>
+      <button class="btn-info hairlines-top hairlines-bottom" ms-class="disabled:!setNickname" ms-click="saveNickname" data-mtaid="my_info.nickname.save">保存</button>
+    </section>
+    <!-- 性别选择 -->
+    <section class="part-sex" ms-if="setStatus==='sex'">
+      <ul class="m-list hairlines-top hairlines-bottom" hidden>
+        <li ms-click="switchSex(1)" class="hairlines-bottom" ms-class="list-icon-tick:setSex==1">男</li>
+        <li ms-click="switchSex(2)" ms-class="list-icon-tick:setSex==2">女</li>
+      </ul>
+      <button class="btn-info hairlines-top hairlines-bottom" ms-class="disabled:!setSex" ms-click="saveSex" data-mtaid="my_info.sex.save">保存</button>
+    </section>
+  </article>
+
+
+  <!--#include file="foot.html"-->
+  <script>
+    // 性别过滤器
+    avalon.filters.sexFilter = function(sex) {
+      if (typeof sex === 'undefined' || !sex) {
+        return '未知';
+      }
+      if ( sex == 1 ){
+        return '男';
+      } else if ( sex == 2 ){
+        return '女';
+      } else{
+        return sex;
+      }
+    };
+
+    avalon.ready(function() {
+      var vm = avalon.define({
+        $id: 'my_info',
+        userInfo: {}, // 用户个人信息
+        avatarData: [ // 头像地址数组
+            "http://cdn.*******.com/avatar/icon_head_1.png",
+            "http://cdn.*******.com/avatar/icon_head_2.png",
+            "http://cdn.*******.com/avatar/icon_head_3.png",
+            "http://cdn.*******.com/avatar/icon_head_4.png",
+            "http://cdn.*******.com/avatar/icon_head_5.png",
+            "http://cdn.*******.com/avatar/icon_head_6.png",
+            "http://cdn.*******.com/avatar/icon_head_7.png",
+            "http://cdn.*******.com/avatar/icon_head_8.png",
+            "http://cdn.*******.com/avatar/icon_head_9.png",
+            "http://cdn.*******.com/avatar/icon_head_10.png",
+            "http://cdn.*******.com/avatar/icon_head_11.png",
+            "http://cdn.*******.com/avatar/icon_head_12.png"
+        ],
+        setAvatar: '', // 头像
+        setNickname: '', // 昵称
+        setSex: '', // 性别 1->男 2->女
+        userId: ddb.cookie('wx_user_id'), // ID
+        userMobile: ddb.cookie('wx_mobile'), // 手机号码
+        setStatus: 'avatar', // 设置页当前项
+        isVolunteer: false, // 是否巴士长
+
+        // 退出登录
+        logOut: function(){
+          ddb.Popup.confirm({
+            title: '登出',
+            content: '确认登出吗？',
+            cancelText: '取消',
+            okText: '确认',
+            okCall: function() {
+              B.user.logout(true, function() {
+                location = 'mine.html';
+              });
+            }
+          });
+        },
+        // 前往设置页
+        switchStatus: function(setting){
+          // 如果已有信息则填充
+          if( +vm.userInfo.sex ){
+            vm.setSex = +vm.userInfo.sex;
+          }
+          if( vm.userInfo.nickname ){
+            vm.setNickname = vm.userInfo.nickname;
+          }
+          // 循环得到所选头像
+          if( vm.userInfo.avatar ){
+            for( var i = 0; i < vm.avatarData.length; i++ ){
+              if( vm.userInfo.avatar == vm.avatarData[i] ){
+                vm.setAvatar = i.toString();
+              }
+            }
+          }
+
+          // 页面跳转
+          vm.setStatus = setting;
+          location.hash = '#page-setting';
+        },
+
+        // 保存设置个人信息
+        saveInfo: function(postdata, callback){
+          ddb.post('member/set_member_info', postdata, function(d) {
+            if ( 0 === +d.ret ){
+              ddb.pgps('member/get_member_info', null);
+              if( callback && typeof callback === 'function' ){
+                callback();
+              }
+            }else{
+              ddb.msg(d.msg);
+            }
+          }, function(){
+            ddb.msg('保存失败，请检查您的网络是否正常');
+            return false;
+          });
+        },
+
+        // 选择头像
+        switchAvatar: function(idx){
+          vm.setAvatar = idx.toString();
+        },
+
+        // 头像保存
+        saveAvatar: function(){
+          if( !vm.setAvatar ){ return; }
+          vm.saveInfo({ avatar: vm.avatarData[vm.setAvatar] }, function(){
+            vm.userInfo.avatar = vm.avatarData[vm.setAvatar];
+            history.back();
+          });
+        },
+
+        // 昵称保存
+        saveNickname: function(){
+          if( !vm.setNickname ){ return; }
+          if( vm.setNickname.replace(/[^\x00-\xff]/g, "**").length > 10 ){
+            ddb.msg('昵称必须为1-10位字符');
+            return false;
+          }
+          if( /[^\w\u4e00-\u9fa5_-]/.test(vm.setNickname) ){
+            ddb.msg('昵称仅支持中英文、数字、“-”、“_”');
+            return false;
+          }
+          vm.saveInfo({ nickname: vm.setNickname }, function(){
+            vm.userInfo.nickname = vm.setNickname;
+            history.back();
+          });
+        },
+
+        // 选择性别
+        switchSex: function(sex){
+          vm.setSex = sex;
+        },
+        // 性别保存
+        saveSex: function(){
+          if( !vm.setSex ){ return; }
+          vm.saveInfo({ sex: vm.setSex }, function(){
+            vm.userInfo.sex = vm.setSex;
+            history.back();
+          });
+        },
+
+        // 限制昵称字节
+        limitLength: function( byteLength ) {
+          var value = this.value;
+          var newvalue = value.replace(/[^\x00-\xff]/g, "**");
+          var length = newvalue.length;
+          //当输入文字的字节数小于设定的字节数
+          if ( length <= +byteLength ){
+            return;
+          }
+          var limitDate = newvalue.substr(0, byteLength);
+          var count = 0;
+          var limitvalue = "";
+          for (var i = 0; i < limitDate.length; i++) {
+            var flat = limitDate.substr(i, 1);
+            if (flat == "*") {
+              count++;
+            }
+          }
+          var size = 0;
+          //if 基点是×; 判断在基点内有×为偶数还是奇数
+          if (count % 2 == 0) {
+            //当为偶数时
+            size = count / 2 + (+byteLength - count);
+            limitvalue = value.substr(0, size);
+          } else {
+            //当为奇数时
+            size = (count - 1) / 2 + (+byteLength - count);
+            limitvalue = value.substr(0, size);
+          }
+          vm.setNickname = limitvalue;
+        }
+      });
+
+
+
+      // 获取用户个人信息
+      ddb.get('member/get_member_info', { cachekey: 'member/get_member_info' }, function(d) {
+        if (0 === +d.ret) {
+          vm.userInfo = d.data;
+          vm.isVolunteer = d.data.role == 2;
+
+          // 循环得到所选头像
+          for( var i = 0; i < vm.avatarData.length; i++ ){
+            if(d.data.avatar == vm.avatarData[i] ){
+              vm.setAvatar = i.toString();
+            }
+          }
+        }
+      });
+
+      // 页面转场时执行
+      $(window).on('popstate', function() {
+        var hash = location.hash.replace(/&/g,'');
+        switch (hash){
+          // 设置页
+          case '#page-setting':
+            $('#page-setting').show();
+            $('#page-setting').addClass('slide-left');
+            setTimeout(function(){
+              $('#page-setting').removeClass('slide-left');
+            },300);
+            break;
+          // 主页
+          default :
+            if(vm.setStatus == 'nickname'){
+              $('.list-line-input').blur(); // ios键盘取消聚焦
+            }
+            $('#page-setting').addClass('slide-right');
+            setTimeout(function(){
+              $('#page-setting').removeClass('slide-right');
+              $('#page-setting').hide();
+            },300);
+        }
+      }).trigger('popstate');
+
+      avalon.scan();
+    });
+  </script>
+</body>
+</html>
