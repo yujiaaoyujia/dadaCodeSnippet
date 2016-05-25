@@ -351,3 +351,27 @@
   </script>
 </body>
 </html>
+
+
+<!--
+********************
+**** 2016-05-25 ****
+********************
+-->
+<!-- 昵称修改 -->
+<section class="part-nickname" ms-if="setStatus==='nickname'">
+  <ul class="m-list hairlines-top hairlines-bottom" hidden>
+    <li>
+      <input class="list-line-input" type="text" placeholder="请输入您的昵称" maxlength="10" ms-duplex="setNickname" ms-keyup="limitLength(10)"/>
+      <i class="list-input-close" ms-if="setNickname" ms-click="clearNickname"></i>
+    </li>
+  </ul>
+  <h3>昵称必须为1-10位字符，支持中英文、数字、“-”、“_”</h3>
+  <button class="btn-info hairlines-top hairlines-bottom" ms-class="disabled:!setNickname" ms-click="saveNickname" data-mtaid="my_info.nickname.save">保存</button>
+</section>
+<script>
+  // 昵称清除
+  clearNickname: function(){
+    vm.setNickname = '';
+  }
+</script>

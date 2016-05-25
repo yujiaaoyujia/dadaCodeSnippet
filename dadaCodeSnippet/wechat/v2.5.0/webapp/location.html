@@ -55,3 +55,27 @@
     }*/
   });
 </script>
+
+<!--
+********************
+**** 2016-05-25 ****
+********************
+-->
+
+<script>
+	// 拖动地图松开刷新 附近位置信息
+	AMap.event.addListener(map, 'dragend', function(e) {
+	  var moveend = AMap.event.addListener(map, 'moveend', function(e) {
+	    oLocation_firstHtml = true;
+	    var p = map.getCenter();
+	    marker && marker.setPosition(p);
+	    geocoder && geocoder.getAddress(p, function(status, result) {
+	      if (status === 'complete') {
+	        geocoder_callBack(result, p);
+	        document.body.scrollTop = 0;
+	        AMap.event.removeListener(moveend);
+	      }
+	    });
+	  });
+	});
+</script>
