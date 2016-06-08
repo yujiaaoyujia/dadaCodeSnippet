@@ -1,0 +1,93 @@
+<!--
+********************
+**** 2016-06-08 ****
+********************
+-->
+
+<!-- 模拟数据 -->
+<script>
+{
+    "ret": 0, 
+    "msg": "", 
+    "server_time": "2016-06-08 10:18:45", 
+    "data": {
+        "item_list": [
+            {
+                "title": "某某某迟到赔付", 
+                "action_type": "4", 
+                "target": "***", 
+                "extra_data": [ ]
+            },
+            {
+                "title": "应急退", 
+                "action_type": "5", 
+                "target": "***", 
+                "extra_data": [ ]
+            }
+        ]
+    }
+}
+</script>
+
+<!-- 下发配置链接 -->
+<div ms-if="pageLinkList.length && !isWesternBus" class="m-links hairlines-top" ms-class="less8:pageLinkType.less8" hidden>
+  <div ms-repeat="pageLinkList" ms-if-loop="$index < 3" class="item" ms-class-1="compensate:el.action_type == 4" ms-class-2="tel:el.action_type == 3" ms-class-3="urgent:el.action_type == 5">
+    <a ms-if="el.action_type <= 3" ms-href="{{el.action_type == 3 ? 'tel:' + el.target : el.target }}" ms-attr-data-mtaid="wait_bus.links.type{{el.action_type}}">{{el.title}}</a>
+    <a ms-if="el.action_type == 4" ms-click="gotoUrl('compensate')" data-mtaid="wait_bus.links.compensate">{{el.title}}</a>
+    <a ms-if="el.action_type == 5" ms-click="gotoUrl('urgent-refund')">{{el.title}}</a>
+  </div>
+  <!-- <div class="item compensate-status">
+    <a ms-if="!isTrain" ms-click="gotoUrl('compensate')">{{compensateText}}</a>
+    <a class="tel" ms-attr-href="tel:{{eticket.driver_mobile}}" ms-if="eticket.driver_mobile && isTrain">联系电话：{{eticket.driver_mobile}}</a>
+  </div> -->
+</div>
+<!-- 应急退引导 -->
+<div class="urgentGuideMask" ms-if="urgentGuide" ms-click="hideUrgentGuide">
+  <!--<img src="./image/prompt_buson.png">-->
+</div>
+
+<script>
+// 应急退引导
+showUrgentGuide: function(){
+  if( ddb.store('urgentGuide') || vm.isGuide ) return false;
+  var ele = $('.m-links > .item.urgent');
+  if(ele){
+    var offset = ele.offset();
+    ele.css({
+      "position": "fixed",
+      "left": offset.left,
+      "top": offset.top,
+      "width": offset.width,
+      "height": offset.height,
+      "margin-left": ele.parent().hasClass('less8')? "-.2rem":".2rem",
+      "padding": "0",
+      "z-index": "115"
+    });
+    ele.find('a').css({
+      "display": "inline",
+      "padding": ".05rem .2rem",
+      "background": "#fff"
+    });
+  }
+  vm.urgentGuide = true;
+  vm.isGuide = true;
+  ddb.store('urgentGuide',1);
+  },
+  hideUrgentGuide: function(){
+  var ele = $('.m-links > .item.urgent');
+  if(ele){
+    ele.attr('style','');
+    ele.find('a').attr('style','');
+    vm.urgentGuide = false;
+  }
+}
+
+// 如果有应急退
+for( var i = 0; i < link.list.length; i++ ){
+  if( link.list[i].action_type == "5" ){
+    vm.showUrgentGuide();
+    break;
+  }
+}
+</script>
+
