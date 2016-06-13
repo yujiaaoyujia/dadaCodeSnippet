@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title>应急退</title>
+  <!--#include file="head.html"-->
+  <style>
+    body { background: #eee; }
+  </style>
+</head>
+
+<body ms-controller="emergency">
+  <header class="emergency-title">
+    <p>您本月剩余<span>3</span>次应急退机会。</p>
+    <a ms-click="emergencyRules">查看应急退说明&nbsp;&gt;&gt;</a>
+  </header>
+  <article>
+    <!-- h5下载引导 -->
+    <section class="emergency-h5">
+      <label>
+        ********<br>
+        ********
+      </label>
+      <button>下载应用体验</button>
+    </section>
+
+    <!-- 普通退票 -->
+    <section class="emergency-normal">
+      <label>
+        ********<br>
+        ********<br>
+        <a ms-click="">查看普通退票规则&nbsp;&gt;&gt;</a>
+      </label>
+      <button>普通退票</button>
+    </section>
+
+    <!-- 应急退票 -->
+    <section class="emergency-refund">
+      <h3>请选择退票原因</h3>
+      <ul>
+        <li>********<i></i></li>
+        <li>********<i></i></li>
+        <li>********<i></i></li>
+        <li>********<i></i></li>
+        <li>********<i></i></li>
+        <li>********<i></i></li>
+      </ul>
+      <div>
+        <textarea name="test" id="test" cols="30" rows="10" placeholder="点此补充退票申请原因，选填"></textarea>
+      </div>
+      <sub></sub>
+      <button>提交申请</button>
+    </section>
+
+    <!-- 退票成功 -->
+    <section class="emergency-success">
+      <i>提交成功！</i><i>退票成功！</i>
+      <p>应急退票申请已提交审核。</p>
+      <p>退款金额将于*个工作日内退还至原支付账户</p>
+      <button>查看退款明细</button>
+    </section>
+
+  </article>
+
+
+  <!--#include file="foot.html"-->
+  <script>
+    avalon.ready(function() {
+      var vm = avalon.define({
+        $id: 'emergency',
+        isApp: ddb.isApp, // 是否APP
+        emergencyRules: function(){
+          ddb.jump('public/emergency_refund_rules.html');
+        }
+      });
+      avalon.scan();
+
+      ddb.get('member/get_ticket_config',{ticket_code: "***"}, function(d){
+        if( 0 === +d.ret ){
+          console.log(d);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
