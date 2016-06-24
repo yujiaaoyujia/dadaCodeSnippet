@@ -1,84 +1,270 @@
 <!doctype html>
 <html>
 <head>
-  <title>应急退</title>
+  <title>****</title>
   <!--#include file="head.html"-->
   <style>
     body { background: #eee; }
+    a.emergency-btn { display: block; margin: 0 .3rem; height: .8rem; line-height: .8rem; border-radius: .08rem; font-size: .32rem; background: #ff9c00; color: #fff; text-align: center; }
+    a.emergency-btn.disabled { background: #bbb; }
+    a.emergency-btn-gray { display: block; margin: 0 auto; width: 3.2rem; height: .8rem; line-height: .72rem; border: 1px solid #aaa; border-radius: .08rem; box-sizing: border-box; font-size: .32rem; color: #999; text-align: center; }
+
+    /* 头部 */
+    .emergency-title { height: 1.8rem; background: #fff; }
+    .emergency-title > p { padding-top: .5rem; height: .3rem; line-height: .3rem; font-size: .3rem; text-align: center; }
+    .emergency-title > p span { margin: 0 .1rem; color: #ff9c00; }
+    .emergency-title > a { display: block; margin-top: .28rem; height: .28rem; line-height: .28rem; font-size: .28rem; color: #ff9c00; text-align: center; }
+
+    /* 普通**** & h5引导 */
+    .emergency-normal > label, .emergency-h5 > label { display: block; margin-top: 1.13rem; line-height: .38rem; font-size: .24rem; color: #999; text-align: center; }
+    .emergency-normal > label a, .emergency-h5 > label a { display: block; margin-top: .3rem; height: .24rem; line-height: .24rem; font-size: .24rem; color: #999; }
+    .emergency-normal > a.emergency-btn, .emergency-h5 > a.emergency-btn { margin-top: .6rem; margin-bottom: .16rem; }
+
+    /* 应急**** */
+    .emergency-refund > h3 { margin-top: .3rem; height: .6rem; line-height: .6rem; padding-left: .3rem; font-size: .28rem; color: #666; }
+    .emergency-refund > ul { background: #fff; }
+    .emergency-refund > ul li { height: .88rem; line-height: .88rem; margin: 0 .3rem; font-size: .3rem; color: #2b2b2b; }
+    .emergency-refund > ul li::before { content: ''; float: right; width: .4rem; height: 100%; background: url(image/icon_radio_disabled.png) center center no-repeat; background-size: contain; }
+    .emergency-refund > ul li.selected::before { content: ''; background-image: url(image/icon_radio_checked.png); }
+    .emergency-refund .txt-area { margin: .3rem 0 .14rem; padding: .2rem .3rem; background: #fff; }
+    .emergency-refund .txt-area textarea{ width: 100%; max-width: 100%; height: 1.75rem; max-height: 3rem; padding: 0; line-height: .38rem; font-size: .3rem; border: none; border-radius: 0; background: transparent; -webkit-appearance: none; }
+    .emergency-refund > sub { display: block; margin-left: .3rem; height: .24rem; line-height: .24rem; font-size: .24rem; color: #999; vertical-align: baseline; }
+    .emergency-refund > a.emergency-btn { margin: .32rem .3rem .16rem; }
+
+    /* ****成功 */
+    .emergency-success::before { content: ''; display: block; margin: 1.2rem auto .3rem; width: 1.2rem; height: 1.2rem; background: url(image/icon_success_thin.png) center center no-repeat; background-size: contain; }
+    .emergency-success p { height: .36rem; line-height: .36rem; font-size: .36rem; font-weight: bold; color: #2b2b2b; text-align: center; }
+    .emergency-success sub { display: table; margin: .1rem auto 0; width: 4rem; height: .32rem; line-height: .4rem; font-size: .32rem; color: #999; vertical-align: baseline; text-align: center; }
+    .emergency-success > a.emergency-btn-gray { margin-top: .56rem; margin-bottom: .16rem; }
+
+    /* 温馨提醒弹窗 */
+    #ddb_popup .popup-title.popup-title-intro { font-weight: bold; }
+    #ddb_popup .popup-content.popup-title-intro { padding: 0 .3rem .4rem; }
+    #ddb_popup .popup-content.popup-title-intro p { display: inline-table; margin: 0; font-size: .24rem;  color: #2b2b2b; }
   </style>
 </head>
 
 <body ms-controller="emergency">
-  <header class="emergency-title">
-    <p>您本月剩余<span>3</span>次应急退机会。</p>
-    <a ms-click="emergencyRules">查看应急退说明&nbsp;&gt;&gt;</a>
+  <header class="emergency-title hairlines-bottom">
+    <p hidden>您本月剩余<span>{{ticketData.emergency_refund_number}}</span>次{{ticketData.line_type_name}}****机会</p>
+    <a href="public/****.html" hidden>查看****说明&nbsp;&gt;&gt;</a>
   </header>
-  <article>
-    <!-- h5下载引导 -->
+
+  <!-- h5下载引导 -->
+  <article ms-if="!isApp" hidden>
     <section class="emergency-h5">
       <label>
-        ********<br>
-        ********
+        ****<br>
+        ****
       </label>
-      <button>下载应用体验</button>
+      <a class="emergency-btn" href="****">下载****体验</a>
+    </section>
+  </article>
+
+  <!-- APP应急**** -->
+  <article ms-if="isApp" hidden>
+    <!-- 普通**** -->
+    <section class="emergency-normal" ms-if="page===1">
+      <label ms-if="!dailyBefore30">
+        您已用完{{ticketData.line_type_name}}****次数，还可尝试进行普通<br>
+        ****（普通****可能产生部分手续费）<br>
+        <a href="public/all_refund_rules.html">查看普通****规则&nbsp;&gt;&gt;</a>
+      </label>
+      <label ms-if="dailyBefore30">
+        发车****以上（{{dailyBefore30}}前）进行****不消耗<br>
+        ****次数，可点击下方按钮进行****
+      </label>
+      <a class="emergency-btn" ms-click="refundOrder(false)">普通****</a>
     </section>
 
-    <!-- 普通退票 -->
-    <section class="emergency-normal">
-      <label>
-        ********<br>
-        ********<br>
-        <a ms-click="">查看普通退票规则&nbsp;&gt;&gt;</a>
-      </label>
-      <button>普通退票</button>
-    </section>
-
-    <!-- 应急退票 -->
-    <section class="emergency-refund">
-      <h3>请选择退票原因</h3>
-      <ul>
-        <li>********<i></i></li>
-        <li>********<i></i></li>
-        <li>********<i></i></li>
-        <li>********<i></i></li>
-        <li>********<i></i></li>
-        <li>********<i></i></li>
+    <!-- 应急**** -->
+    <section class="emergency-refund" ms-if="page===2">
+      <h3>请选择****原因</h3>
+      <ul class="hairlines-top hairlines-bottom">
+        <li ms-repeat="reason" ms-class-1="selected:selected == ++$index" ms-class-2="hairlines-bottom:!$last" ms-click="selectReason(++$index)">{{el}}</li>
       </ul>
-      <div>
-        <textarea name="test" id="test" cols="30" rows="10" placeholder="点此补充退票申请原因，选填"></textarea>
+      <div class="txt-area hairlines-top hairlines-bottom">
+        <textarea ms-duplex="moreReason" placeholder="点此补充****申请原因，选填"></textarea>
       </div>
-      <sub></sub>
-      <button>提交申请</button>
+      <sub>****申请后，将在工作时间****内完成审核。</sub>
+      <a class="emergency-btn" ms-class="disabled:!selected" ms-click="refundOrder(true)">提交申请</a>
     </section>
 
-    <!-- 退票成功 -->
-    <section class="emergency-success">
-      <i>提交成功！</i><i>退票成功！</i>
-      <p>应急退票申请已提交审核。</p>
-      <p>退款金额将于*个工作日内退还至原支付账户</p>
-      <button>查看退款明细</button>
+    <!-- ****成功 -->
+    <section class="emergency-success" ms-if="page===4 || page===5 || page===6">
+      <p ms-if="page===4 || page===5">****成功！</p>
+      <sub ms-if="page===5">****将于5-7个工作日内****账户</sub>
+      <p ms-if="page===6">提交成功！</p>
+      <sub ms-if="page===6">****申请已提交审核。</sub>
+      <a class="emergency-btn-gray" ms-click="refundDetail">查看****明细</a>
     </section>
 
   </article>
 
-
   <!--#include file="foot.html"-->
+  <script src="js/lib/moment.js?rev=2.0"></script>
   <script>
     avalon.ready(function() {
       var vm = avalon.define({
         $id: 'emergency',
         isApp: ddb.isApp, // 是否APP
-        emergencyRules: function(){
-          ddb.jump('public/emergency_refund_rules.html');
+        page: 0, // ****页面状态 1-普通 2-应急 4-已 5-普通成功 6-应急成功
+        ticketData: {}, // 电子票配置信息
+        dailyBefore30: "", // 日票****30分钟
+        reason: [ // ****原因
+          "************",
+          "************",
+          "************",
+          "************",
+          "************",
+          "************"
+        ],
+        moreReason: "", // 补充原因
+        selected: 0, // ****原因选中项
+
+        // 选择原因
+        selectReason: function(idx){
+          vm.selected = vm.selected === idx? 0:idx;
+        },
+
+        // ****
+        refundOrder: function(isEmergency){
+          var self = $(this);
+          if( self.hasClass('disabled') ) { return; }
+          ddb.Popup.confirm({
+            title: isEmergency? '应急****':'普通****',
+            content: '确认****么？',
+            cancelText: '放弃',
+            okText: '****',
+            okCall: function() {
+              // 应急****验证时间
+              if( isEmergency && em_refund_end_time && moment().isAfter(em_refund_end_time) ){
+                alert('已过应急****时间，提交失败');
+                return;
+              }
+              // 应急****与否需提交不同数据
+              var postData = {
+                order_number: order_number,
+                date_list: start_date
+              };
+              if(isEmergency){
+                $.extend(postData,{
+                  is_emergency: 1,
+                  refund_reason: vm.moreReason.trim()? vm.moreReason.trim():undefined,
+                  refund_reason_no: vm.selected
+                });
+              }
+
+              // 提交****
+              self.addClass('disabled');
+              ddb.post("refund/submit_refund_order", postData, function(d) {
+                if ( 0 === +d.ret ){
+                  if(isEmergency){
+                    vm.page = 6; // 应急****成功
+                    vm.ticketData.emergency_refund_number -= 1; // 应急****显示-1
+                  }else{
+                    vm.page = 5; // 普通****成功
+                  }
+
+                } else if( 10601012 === +d.ret ){
+                  // 普通****超过****时间
+                  if( vm.dailyBefore30 ){
+                    ddb.Popup.intro(
+                      'popup-title-intro','温馨提醒',
+                      '<p>现在已过****时间，您可继续进行应急****，应急****将消耗您的****次数。</p>',
+                      '<span>知道了</span>',
+                      function(){
+                        location.reload();
+                      },false
+                    );
+                  } else {
+                    self.removeClass('disabled');
+                    alert('已过****时间，提交失败');
+                  }
+                } else if ( 10601047 === +d.ret ){
+                  // 普通****费率为0，不需要应急****（接口数据正确时不存在这个逻辑）
+                  ddb.Popup.intro(
+                    'popup-title-intro','温馨提醒',
+                    '<p>现在****无需手续费，不需要****。</p>',
+                    '<span>知道了</span>',
+                    function(){
+                      history.back();
+                    },false
+                  );
+                } else {
+                  self.removeClass('disabled');
+                  alert( d.msg );
+                }
+              },function(){
+                self.removeClass('disabled');
+                alert('提交失败，请检查您的网络是否正常');
+              });
+            }
+          });
+
+        },
+
+        // 查看****明细
+        refundDetail: function(){
+          ddb.jump( "order_details.html?order_number=" + order_number + "&back_to_my_order=1" );
         }
+
+
       });
       avalon.scan();
 
-      ddb.get('member/get_ticket_config',{ticket_code: "***"}, function(d){
+      // 获取所需参数
+      var ticket_code = B.url.getParam('ticket_code'); // 电子票编码
+      // var ticket_type = +B.url.getParam('ticket_type'); // 1-日票 2-月票
+      var start_date = B.url.getParam('start_date'); // 发车日期
+      var start_time = B.url.getParam('line_start_time'); // 始发站发车时间
+      var ticket_time = start_date + ' ' + start_time; // 乘车完整时间
+      var order_number = B.url.getParam('order_number'); // 订单号
+      var em_refund_end_time; // ****结束时间
+
+      // 获取电子票数据
+      ddb.get('member/get_ticket_config',{ ticket_code: ticket_code }, function(d){
         if( 0 === +d.ret ){
-          console.log(d);
+          vm.ticketData = d.data; // 设置数据
+          if( !vm.isApp ){ return; } // 只有app可以****
+          if( +d.data.main_line_type !== 1 ){
+            alert('只有上下班可以进行****');
+            return;
+          }
+
+          // 当前适用****类型
+          switch ( +d.data.refund_type ){
+            case 1: // 普通****
+              vm.page = 1;
+              // 判断****前****
+              var before30 = moment(ticket_time).subtract( 30,'minute');
+              if( /* ticket_type == 1 && */ moment().isBefore( before30 ) ){
+                vm.dailyBefore30 = before30.format('HH:mm');
+              }
+              break;
+            case 2: // 应急****
+              vm.page = 2;
+              em_refund_end_time = d.data.emergency_refund_end_time;
+              break;
+            case 4: // 已****
+              vm.page = 4;
+              break;
+            case 3: // 不能****
+            default :
+              alert('已过****时间');
+              setTimeout(function(){
+                history.back();
+              },1000);
+              return;
+          }
+
+        }else{
+          alert('系统繁忙，请稍后重新尝试');
         }
+      },function(){
+        alert('获取数据失败，请检查您的网络是否正常');
       });
+
     });
   </script>
 </body>
